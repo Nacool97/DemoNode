@@ -41,8 +41,6 @@ class Pools:
 
 app = Flask(__name__)
 
-pool = Pools()
-
 
 @app.route('/add_transactions', methods=['POST'])
 def add_transaction_to_pool():
@@ -121,4 +119,5 @@ def get_nodes():
 
 
 if __name__ == "__main__":
+    pool = Pools()
     app.run(host='0.0.0.0', port=2000)

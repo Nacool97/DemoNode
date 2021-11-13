@@ -1,1 +1,1 @@
-web: gunicorn node.py
+worker: gunicorn node.py

@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
 from flask import Flask, jsonify, request
-import os
+
 
 class Pools:
     def __init__(self):
@@ -41,6 +41,7 @@ class Pools:
 
 app = Flask(__name__)
 pool = Pools()
+
 
 @app.route('/add_transactions', methods=['POST'])
 def add_transaction_to_pool():
@@ -116,8 +117,3 @@ def get_nodes():
         "length": len(pool.nodes_pool)
     }
     return response, 200
-
-
-if __name__ == "__main__":
-
-    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 2000)))

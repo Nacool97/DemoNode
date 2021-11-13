@@ -1,1 +1,1 @@
-web: python node.py
+worker: python node.py

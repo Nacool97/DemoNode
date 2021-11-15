@@ -94,7 +94,7 @@ def add_nodes():
 def get_transactions():
     return jsonify({"message": pool.transactions_pool})
 
-@app.route('/add_block',methods['POST'])
+@app.route('/add_block',methods=['POST'])
 def add_block_to_pool():
     if request.method == 'POST':
         data = request.get_json()

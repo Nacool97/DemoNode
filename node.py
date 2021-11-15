@@ -95,19 +95,21 @@ def get_transactions():
     return jsonify({"message": pool.transactions_pool})
 
 
-@app.route('/add_block', methods=['POST'])
 def add_block_to_pool():
     if request.method == 'POST':
         data = request.get_json()
         chain = data['chain']
         for block in chain:
-            if block['index'] ==1:
+            if block['index'] == 1:
                 pool.add_block(block)
             elif len(block['miner_address']) >= int(0.75 * len(pool.nodes_pool)):
                 pool.add_block(block)
+                for node in pool.nodes_pool:
+                    requests.post(f'https://{node}/set_block', json={'block': block})
             else:
                 pool.add_block_to_proposed_block(block)
     return 202
+
 
 
 @app.route("/get_proposed_block")

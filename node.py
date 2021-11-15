@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 import os
 import requests
 
+
 class Pools:
     def __init__(self):
         self.nodes_pool = set()
@@ -95,7 +96,8 @@ def add_nodes():
 def get_transactions():
     return jsonify({"message": pool.transactions_pool})
 
-@app.route('/add_block',methods=['POST'])
+
+@app.route('/add_block', methods=['POST'])
 def add_block_to_pool():
     if request.method == 'POST':
         data = request.get_json()
@@ -107,13 +109,12 @@ def add_block_to_pool():
             elif len(block['miner_address']) >= int(0.75 * len(pool.nodes_pool)):
                 pool.add_block(block)
                 for node in pool.nodes_pool:
-                    requests.post(f'https://{node}/set_block', json={'block': block})
+                    requests.post(f'https://{node}/set_block', json={'block': pool.blockchain})
                 status = 201
             else:
                 pool.add_block_to_proposed_block(block)
                 status = 201
     return jsonify({"message": f"{status}"}), status
-
 
 
 @app.route("/get_proposed_block")
@@ -142,5 +143,4 @@ def get_nodes():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',  port=os.environ.get("PORT", 5000))
-
+    app.run(host='0.0.0.0', port=os.environ.get("PORT", 5000))

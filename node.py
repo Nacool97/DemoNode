@@ -4,6 +4,7 @@ from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
 from flask import Flask, jsonify, request
 import os
+import requests
 
 class Pools:
     def __init__(self):

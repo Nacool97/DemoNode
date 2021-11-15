@@ -112,7 +112,7 @@ def add_block_to_pool():
             else:
                 pool.add_block_to_proposed_block(block)
                 status = 201
-    return return jsonify({"message": f"{status}"}), status
+    return jsonify({"message": f"{status}"}), status
 
 
 

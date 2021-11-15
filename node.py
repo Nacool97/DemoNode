@@ -103,13 +103,16 @@ def add_block_to_pool():
         for block in chain:
             if block['index'] == 1:
                 pool.add_block(block)
+                status = 201
             elif len(block['miner_address']) >= int(0.75 * len(pool.nodes_pool)):
                 pool.add_block(block)
                 for node in pool.nodes_pool:
                     requests.post(f'https://{node}/set_block', json={'block': block})
+                status = 201
             else:
                 pool.add_block_to_proposed_block(block)
-    return 202
+                status = 201
+    return return jsonify({"message": f"{status}"}), status
 
 
 

@@ -101,12 +101,12 @@ def add_block_to_pool():
         data = request.get_json()
         chain = data['chain']
         for block in chain:
-        	if block['index'] ==1:
-            		pool.add_block(block)
-            	elif len(block['miner_address'] >= int(0.75 * len(pool.nodes_pool)):
-        		pool.add_block(block)
-        	else:
-            		pool.add_block_to_proposed_block(block)
+            if block['index'] ==1:
+                pool.add_block(block)
+            elif len(block['miner_address']) >= int(0.75 * len(pool.nodes_pool)):
+                pool.add_block(block)
+            else:
+                pool.add_block_to_proposed_block(block)
     return 202
 
 
@@ -137,4 +137,3 @@ def get_nodes():
 
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=2000)
-

@@ -3,7 +3,6 @@ from urllib.parse import urlparse
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey import RSA
 from flask import Flask, jsonify, request
-import os
 
 
 class Pools:
@@ -11,6 +10,7 @@ class Pools:
         self.nodes_pool = set()
         self.transactions_pool = []
         self.blockchain = []
+        self.proposed_block = []
 
     def add_node(self, address):
         parsed_url = urlparse(address)
@@ -28,6 +28,9 @@ class Pools:
     def add_block(self, block):
         self.blockchain.append(block)
 
+    def add_block_to_proposed_block(self, block):
+        self.proposed_block.append(block)
+
     def verify_transaction(self, public_key, data, sign):
         try:
             data = SHA256.new(data.encode())
@@ -41,6 +44,7 @@ class Pools:
 
 
 app = Flask(__name__)
+
 pool = Pools()
 
 
@@ -95,9 +99,20 @@ def get_transactions():
 def add_block_to_pool():
     if request.method == 'POST':
         data = request.get_json()
-        block = data['block']
-        pool.add_block(block)
+        chain = data['chain']
+        for block in chain:
+        	if block['index'] ==1:
+            		pool.add_block(block)
+            	elif len(block['miner_address'] >= int(0.75 * len(pool.nodes_pool)):
+        		pool.add_block(block)
+        	else:
+            		pool.add_block_to_proposed_block(block)
     return 202
+
+
+@app.route("/get_proposed_block")
+def get_proposed_block():
+    return jsonify({"chain": pool.proposed_block}), 200
 
 
 @app.route('/get_blockchain')
@@ -121,4 +136,5 @@ def get_nodes():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get('PORT', 2000)))
+    app.run(host='127.0.0.1', port=2000)
+

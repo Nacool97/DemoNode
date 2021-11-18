@@ -60,7 +60,8 @@ def add_transaction_to_pool():
             if not all(keys in json_data for keys in transaction_keys):
                 return "Error", 400
             else:
-                is_valid = pool.verify_transaction(public_key=json_data['public_key'],
+                public_key = RSA.import_key(json_data['public_key'])
+                is_valid = pool.verify_transaction(public_key=public_key,
                                                    data=str(json_data['receiver'] + str(json_data['amount'])),
                                                    sign=json_data['signature'])
                 if is_valid:

@@ -62,7 +62,7 @@ def add_transaction_to_pool():
             else:
                 is_valid = pool.verify_transaction(public_key=json_data['public_key'],
                                                    data=str(json_data['receiver'] + str(json_data['amount'])),
-                                                   sign=json_data['sign'])
+                                                   sign=json_data['signature'])
                 if is_valid:
                     pool.add_transactions(json_data['sender'], json_data['receiver'], json_data['amount'],
                                           json_data['signature'], json_data['public_key'])

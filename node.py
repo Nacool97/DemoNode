@@ -37,7 +37,7 @@ class Pools:
     def verify_transaction(self, public_key, data, sign):
         try:
             data = SHA256.new(data.encode())
-            pub_key = RSA.import_key(public_key)
+            pub_key = RSA.import_key(bytes.fromhex(public_key))
             print(pub_key)
             pkcs1_15.new(pub_key).verify(data, bytes.fromhex(sign))
             return True

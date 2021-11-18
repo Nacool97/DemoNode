@@ -66,7 +66,7 @@ def add_transaction_to_pool():
                 if is_valid:
                     pool.add_transactions(json_data['sender'], json_data['receiver'], json_data['amount'],
                                           json_data['signature'], json_data['public_key'])
-                    for node in nodes_pool:
+                    for node in pool.nodes_pool:
                         requests.post(f'https://{node}/set_transactions', json=json_data)
                 else:
                     return "Invalid Transaction", 400

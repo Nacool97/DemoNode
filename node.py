@@ -18,12 +18,11 @@ class Pools:
         parsed_url = urlparse(address)
         self.nodes_pool.add(parsed_url.netloc)
 
-    def add_transactions(self, sender, receiver, amount, sign):
+    def add_transactions(self, sender, receiver, amount):
         transaction = {
             "sender": sender,
             "receiver": receiver,
-            "amount": amount,
-            "sign": sign
+            "amount": amount
         }
         self.transactions_pool.append(transaction)
 
@@ -63,8 +62,9 @@ def add_transaction_to_pool():
                                                    data=str(json_data['receiver'] + str(json_data['amount'])),
                                                    sign=json_data['sign'])
                 if is_valid:
-                    pool.add_transactions(json_data['sender'], json_data['receiver'], json_data['amount'],
-                                          json_data['sign'])
+                    pool.add_transactions(json_data['sender'], json_data['receiver'], json_data['amount'])
+                    for node in nodes_pool:
+                        requests.post(f'https://{node}/set_transactions', json=json_data)
                 else:
                     return "Invalid Transaction", 400
         else:
@@ -141,6 +141,10 @@ def get_nodes():
     }
     return response, 200
 
+@app.route('/clear_transactions',methods=['POST'])
+def clear_transactions():
+    pool.transactions_pool = []
+    return "Done",200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=os.environ.get("PORT", 5000))

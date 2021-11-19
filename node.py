@@ -122,18 +122,6 @@ def add_block_to_pool():
     return jsonify({"message": f"{status}"}), status
 
 
-def clear_unused_nodes():
-    for node in pool.nodes_pool:
-        response = requests.get(f"https://{node}/")
-        if response.status_code == 404:
-            pool.nodes_pool.remove(node)
-
-
-scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(clear_unused_nodes,trigger='interval',seconds=1)
-scheduler.start()
-
-
 @app.route("/get_proposed_block")
 def get_proposed_block():
     return jsonify({"chain": pool.proposed_block}), 200
@@ -164,6 +152,17 @@ def clear_transactions():
     pool.transactions_pool = []
     return "Done", 200
 
+
+def clear_unused_nodes():
+    for node in pool.nodes_pool:
+        response = requests.get(f"https://{node}/")
+        if response.status_code == 404:
+            pool.nodes_pool.remove(node)
+
+
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(clear_unused_nodes, trigger='interval', seconds=90)
+scheduler.start()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=os.environ.get("PORT", 5000))

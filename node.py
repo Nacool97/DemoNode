@@ -5,6 +5,7 @@ from Crypto.PublicKey import RSA
 from flask import Flask, jsonify, request
 import os
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 class Pools:
@@ -61,7 +62,8 @@ def add_transaction_to_pool():
                 return "Error", 400
             else:
                 is_valid = pool.verify_transaction(public_key=json_data['public_key'],
-                                                   data=str(json_data['sender']+json_data['receiver'] + str(json_data['amount'])),
+                                                   data=str(json_data['sender'] + json_data['receiver'] + str(
+                                                       json_data['amount'])),
                                                    sign=json_data['signature'])
                 if is_valid:
                     pool.add_transactions(json_data['sender'], json_data['receiver'], json_data['amount'],
@@ -118,6 +120,18 @@ def add_block_to_pool():
                 pool.add_block_to_proposed_block(block)
                 status = 201
     return jsonify({"message": f"{status}"}), status
+
+
+def clear_unused_nodes():
+    for node in pool.nodes_pool:
+        response = requests.get(f"https://{node}/")
+        if response.status_code == 404:
+            pool.nodes_pool.remove(node)
+
+
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(clear_unused_nodes,trigger='interval',seconds=1)
+scheduler.start()
 
 
 @app.route("/get_proposed_block")
